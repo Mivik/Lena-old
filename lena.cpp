@@ -22,10 +22,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-const char *DEFAULT_CLIENT_NAME				= "Deco AK IOI";
-const char *DEFAULT_CLIENT_OS				= "YGG OS";
-const char *DEFAULT_CLIENT_DISPLAY_WORKDIR	= "[UnknownPath]";
-const char *DEFAULT_CLIENT_REAL_WORKDIR		= "/home/mivik/TEST/";
+const char *DEFAULT_CLIENT_NAME				= "linux user";
+const char *DEFAULT_CLIENT_OS				= "linux";
+const char *DEFAULT_CLIENT_DISPLAY_WORKDIR	= "[HAHA]";
+const char *DEFAULT_CLIENT_REAL_WORKDIR		= "~/TEST/";
 
 const int FILEPART_SIZE = 16384;
 using namespace std;
