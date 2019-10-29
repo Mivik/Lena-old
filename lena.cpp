@@ -330,8 +330,8 @@ int main(int argc, char **args) {
 
 	int ret;
 	while (1) {
-		ret=recvfrom(UDP_SOCKET,&packet,sizeof(TPacket),0,(sockaddr*)&ClientAddr,&socklen);
-		printf("%s | %s | %s\n",packet.info.name,packet.info.workDir,packet.info.OS);
+		// ret=recvfrom(UDP_SOCKET,&packet,sizeof(TPacket),0,(sockaddr*)&ClientAddr,&socklen);
+		// printf("%s | %s | %s\n",packet.info.name,packet.info.workDir,packet.info.OS);
 	}
 	close(UDP_SOCKET);
 	return 0;
