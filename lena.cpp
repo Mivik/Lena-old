@@ -50,7 +50,7 @@ inline void printHex(FILE *out, const char *src, int len, bool upper=0) {
 inline void splitLine(FILE *out=stdout, const char c='=') {
 	winsize size;
 	ioctl(STDIN_FILENO,TIOCGWINSZ,(char*)&size);
-	while (size.ws_col--) fputc(c,out);
+	while ((size.ws_col--)>0) fputc(c,out);
 }
 
 // ========================Type Defs========================
