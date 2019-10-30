@@ -25,12 +25,14 @@ const int PORT_SERVER = 12575;
 const int MAX_LISTEN_SIZE = 512;
 
 const char *DAEMON_PATH="lena";
+const char *CONFIG_PATH="%s/.config/lena_client";
 
 const int FILEPART_SIZE = 16384;
 
 const char DOP_KILL = 1;
 const char DOP_SET_CONFIG = 2;
 const char DOP_GET_CONFIG = 3;
+const char DOP_GET_ALL = 4;
 
 template <int BufferSize>
 struct BufferedSocket {

@@ -40,6 +40,7 @@ inline void help(FILE *out=stdout) {
   start     - Start Lena client (background) if no\n\
               Lena client is currently running.\n\
   stop      - Stop Lena client if exists.\n\
+  info      - Show all the basic info.\n\
   config    - Set the config of Lena with following\n\
               syntax:\n\
 \n\
@@ -81,11 +82,19 @@ socklen_t isocklen,usocklen;
 TPacket packet;
 pthread_mutex_t mutex_config,mutex_chdir;
 
+char CONFIG_BUFFER[PATH_MAX];
 inline void InitPacket(TPacket &packet) {
 	packet.operation=TPacket::ONLINE;
-	strcpy(packet.info.name,CLIENT_NAME);
-	strcpy(packet.info.OS,CLIENT_OS);
-	strcpy(packet.info.workDir,CLIENT_DISPLAY_WORKDIR);
+	sprintf(CONFIG_BUFFER,CONFIG_PATH,getenv("HOME"));
+	FILE *file=fopen(CONFIG_BUFFER,"rb");
+	if (!file) {
+		strcpy(packet.info.name,CLIENT_NAME);
+		strcpy(packet.info.OS,CLIENT_OS);
+		strcpy(packet.info.workDir,CLIENT_DISPLAY_WORKDIR);
+	} else {
+		fread(&packet.info,sizeof(TClientInfo),1,file);
+		fclose(file);
+	}
 }
 void *TaskUDPSend(void *args) {
 	int ret;
@@ -203,8 +212,17 @@ void *TaskTCP(void *args) {
 	}
 }
 pthread_t _TaskUDPSend,_TaskTCP;
-char CONFIG_BUFFER[PATH_MAX];
 const char *OPTS[]={"name","os","display-path","real-path"};
+inline void saveConfig() {
+	sprintf(CONFIG_BUFFER,CONFIG_PATH,getenv("HOME"));
+	FILE *file=fopen(CONFIG_BUFFER,"wb");
+	if (!file) {
+		reportError("Failed to save config");
+		return;
+	}
+	fwrite(&packet.info,sizeof(TClientInfo),1,file);
+	fclose(file);
+}
 inline void setConfig(char op, const char *src) {
 	printf("[CONFIG %s set to %s]\n",OPTS[op],src);
 	if (op==3) { // real path
@@ -220,6 +238,7 @@ inline void setConfig(char op, const char *src) {
 		case 2:strcpy(packet.info.workDir,src);break;
 	}
 	pthread_mutex_unlock(&mutex_config);
+	saveConfig();
 }
 inline const char *getConfig(char op) {
 	if (op==3) {
@@ -330,6 +349,10 @@ int daemon_main() {
 				send(R.socket,str,strlen(str),0);
 				break;
 			}
+			case DOP_GET_ALL:{
+				send(R.socket,&packet.info,sizeof(TClientInfo),0);
+				break;
+			}
 		}
 		R.close();
 	}
@@ -411,6 +434,14 @@ int main(int argc, char **argv) {
 		close(DAEMON_SOCKET);
 		return 0;
 	}
+	if (!strcmp(s,"info")) {
+		if (connectToDaemon()) goto connectFailed;
+		char op=DOP_GET_ALL;
+		if (send(DAEMON_SOCKET,&op,1,0)<0) goto infoFailed;
+		if (recv(DAEMON_SOCKET,&packet.info,sizeof(TClientInfo),0)<0) goto infoFailed;
+		packet.info.print();
+		return 0;
+	}
 	if ((!strcmp(s,"help"))||(!strcmp(s,"--help"))||(!strcmp(s,"-h"))) {
 		ensure(2);
 		return help(),0;
@@ -439,6 +470,10 @@ int main(int argc, char **argv) {
 	return 1;
 
 	configFailed:
-	fprintf(stderr,"Failed to send config command");
+	reportError("Failed to send config command");
+	return 1;
+
+	infoFailed:
+	reportError("Failed to get info");
 	return 1;
 }
