@@ -117,7 +117,7 @@ const char *CLIENT_REAL_WORKDIR = DEFAULT_CLIENT_REAL_WORKDIR;
 
 typedef int socket_t;
 
-socket_t UDP_SOCKET,TCP_SOCKET;
+socket_t UDP_SOCKET,TCP_SOCKET,DAEMON_SOCKET;
 sockaddr_in ServerAddr,ClientAddr,TCPAddr;
 socklen_t socklen;
 TPacket packet;
@@ -292,7 +292,7 @@ int main(int argc, char **args) {
 		} else goto err;
 		continue;
 		err:;
-		printf("Unrecognized command:%s\n",s);
+		printf("Unrecognized command: %s\n",s);
 		return 1;
 	}
 	chdir(CLIENT_REAL_WORKDIR);
@@ -313,10 +313,6 @@ int main(int argc, char **args) {
 	ClientAddr=ServerAddr;
 	ServerAddr.sin_port=htons(PORT_SERVER);
 	ClientAddr.sin_port=htons(PORT_CLIENT);
-	if (::bind(UDP_SOCKET,(sockaddr*)&ClientAddr,socklen)<0) {
-		reportError("Failed to bind UDP socket");
-		return 1;
-	}
 	InitPacket(packet);
 	packet.info.print();
 	pthread_create(&_TaskUDPSend,NULL,TaskUDPSend,0);
@@ -330,10 +326,6 @@ int main(int argc, char **args) {
 	}
 	pthread_create(&_TaskTCP,NULL,TaskTCP,0);
 
-	int ret;
-	while (1) {
-		// ret=recvfrom(UDP_SOCKET,&packet,sizeof(TPacket),0,(sockaddr*)&ClientAddr,&socklen);
-		// printf("%s | %s | %s\n",packet.info.name,packet.info.workDir,packet.info.OS);
-	}
+	while(1);
 	return 0;
 }
