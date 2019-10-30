@@ -2,6 +2,9 @@
 #ifndef __LENA_H_
 #define __LENA_H_
 
+#include <bits/stl_function.h>
+#include <bits/functional_hash.h>
+
 #include <cstdio>
 #include <cstring>
 
@@ -112,6 +115,22 @@ struct TClientInfo {
 		splitLine(out);
 		fprintf(out,"\n\b");
 	}
+};
+namespace std {
+	template<>
+	struct hash<TClientInfo> {
+		size_t operator()(const TClientInfo &t) const {
+			const int P = sizeof(t)/sizeof(size_t);
+			size_t *st=(size_t*)&t,*en=st+P;
+			size_t ret=0;
+			for (;st!=en;++st) ret^=*st;
+			return ret;
+		}
+	};
+	template<>
+	struct equal_to<TClientInfo> {
+		bool operator()(const TClientInfo &a, const TClientInfo &b) const { return !memcmp(a.clientID,b.clientID,sizeof(TClientID)); }
+	};
 };
 
 struct TPacket {

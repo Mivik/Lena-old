@@ -5,8 +5,8 @@
 
 #include <cstdlib>
 #include <string>
-#include <vector>
-#include <set>
+#include <typeinfo>
+#include <unordered_map>
 
 #include <pthread.h>
 #include <dirent.h>
@@ -20,6 +20,7 @@ using namespace std;
 // ========================Main Part========================
 
 typedef int socket_t;
+typedef unsigned int addr_t;
 
 socket_t UDP_SOCKET,TCP_SOCKET;
 sockaddr_in ServerAddr,ClientAddr,TCPAddr;
@@ -31,6 +32,15 @@ void *TaskUDPRecv(void *args) {
 	return 0;
 }
 pthread_t _TaskUDPRecv;
+
+unordered_map<TClientInfo,addr_t> clients;
+
+inline void reprint() {
+	for (auto iter : clients) {
+		const TClientInfo &info = iter.first;
+		printf("%s | %s | %s | %s\n",info.name,info.OS,info.workDir,inet_ntoa((in_addr){iter.second}));
+	}
+}
 
 int main(int argc, char **args) {
 	if ((UDP_SOCKET=socket(AF_INET,SOCK_DGRAM,0))<0) {
@@ -47,10 +57,8 @@ int main(int argc, char **args) {
 	socklen=sizeof(sockaddr_in);
 	ServerAddr.sin_family=AF_INET;
 	ServerAddr.sin_addr.s_addr=inet_addr(BROAD_ADDR);
-	ClientAddr=ServerAddr;
 	ServerAddr.sin_port=htons(PORT_SERVER);
-	ClientAddr.sin_port=htons(PORT_CLIENT);
-	if (::bind(UDP_SOCKET,(sockaddr*)&ClientAddr,socklen)<0) {
+	if (::bind(UDP_SOCKET,(sockaddr*)&ServerAddr,socklen)<0) {
 		reportError("Failed to bind UDP socket");
 		return 1;
 	}
@@ -62,7 +70,11 @@ int main(int argc, char **args) {
 	int ret;
 	while (1) {
 		ret=recvfrom(UDP_SOCKET,&packet,sizeof(TPacket),0,(sockaddr*)&ClientAddr,&socklen);
-		printf("%s | %s | %s\n",packet.info.name,packet.info.workDir,packet.info.OS);
+		addr_t cur = ClientAddr.sin_addr.s_addr;
+		if (clients.find(packet.info)==clients.end()||clients[packet.info]!=cur) {
+			clients[packet.info]=cur;
+			reprint();
+		}
 	}
 	return 0;
 }
