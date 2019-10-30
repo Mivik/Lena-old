@@ -298,10 +298,6 @@ int daemon_main() {
 	ClientAddr=ServerAddr;
 	ServerAddr.sin_port=htons(PORT_SERVER);
 	ClientAddr.sin_port=htons(PORT_CLIENT);
-	if (::bind(UDP_SOCKET,(sockaddr*)&ClientAddr,isocklen)<0) {
-		reportError("Failed to bind UDP socket");
-		return 1;
-	}
 	InitPacket(packet);
 	packet.info.print();
 	pthread_create(&_TaskUDPSend,NULL,TaskUDPSend,0);
