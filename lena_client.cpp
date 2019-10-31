@@ -135,6 +135,8 @@ void *TaskTCP(void *args) {
 			return 0;
 		}
 		puts("[TCP REQUEST BEGIN]");
+		nam.clear();
+		ext.clear();
 		for (i=0;;i++) {
 			c=R.getchar();
 			if (c==EOF) break;
@@ -168,6 +170,7 @@ void *TaskTCP(void *args) {
 			}
 		}
 		pthread_mutex_lock(&mutex_chdir);
+		fs.clear();
 		DIR *dir=opendir(".");
 		dirent *file;
 		while ((file=readdir(dir))!=NULL) {
