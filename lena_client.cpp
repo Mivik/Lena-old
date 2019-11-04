@@ -93,6 +93,8 @@ inline void InitPacket(TPacket &packet) {
 		strcpy(packet.info.workDir,CLIENT_DISPLAY_WORKDIR);
 	} else {
 		fread(&packet.info,sizeof(TClientInfo),1,file);
+		fread(CONFIG_BUFFER,sizeof(CONFIG_BUFFER),1,file);
+		chdir(CONFIG_BUFFER);
 		fclose(file);
 	}
 }
@@ -224,6 +226,8 @@ inline void saveConfig() {
 		return;
 	}
 	fwrite(&packet.info,sizeof(TClientInfo),1,file);
+	getcwd(CONFIG_BUFFER,PATH_MAX);
+	fwrite(CONFIG_BUFFER,sizeof(CONFIG_BUFFER),1,file);
 	fclose(file);
 }
 inline void setConfig(char op, const char *src) {
