@@ -98,7 +98,7 @@ int main(int argc, char **args) {
 		return 1;
 	}
 	puts("Connected successfully, fetching files...");
-	strcpy(FILE_BUFFER,"GET\r\nAccept-Name: vode\r\nAccept-Name: planina\r\nAccept-Name: retro\r\nAccept-Extension: cpp\r\n\r\n");
+	strcpy(FILE_BUFFER,"GET\r\nAccept-Name: crazy\r\nAccept-Name: transporter\r\nAccept-Name: fish\r\nAccept-Extension: cpp\r\n\r\n");
 	if (send(TCP_SOCKET,FILE_BUFFER,strlen(FILE_BUFFER),0)<0) {
 		reportError("Failed to fetch");
 		return 1;
