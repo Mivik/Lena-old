@@ -21,7 +21,8 @@
 
 typedef int socket_t;
 
-const char *BROAD_ADDR="255.255.255.255";
+// const char *BROAD_ADDR="255.255.255.255";
+const char *BROAD_ADDR="10.92.104.103";
 const int PORT_CLIENT = 12574;
 const int PORT_SERVER = 12575;
 
