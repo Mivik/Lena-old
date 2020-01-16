@@ -78,7 +78,8 @@ int main(int argc, char **args) {
 
 	socklen=sizeof(sockaddr_in);
 	ServerAddr.sin_family=AF_INET;
-	ServerAddr.sin_addr.s_addr=inet_addr(BROAD_ADDR);
+	// ServerAddr.sin_addr.s_addr=inet_addr(BROAD_ADDR);
+	ServerAddr.sin_addr.s_addr=inet_addr("10.92.104.111");
 	ServerAddr.sin_port=htons(PORT_CLIENT);
 	/*if (::bind(UDP_SOCKET,(sockaddr*)&ServerAddr,socklen)<0) {
 		reportError("Failed to bind UDP socket");
@@ -86,7 +87,10 @@ int main(int argc, char **args) {
 	}*/
 	TPacket packet;
 	packet.operation = TPacket::SHOW_TEST_MESSAGE;
-	strcpy(packet.info.name,"zcy AK IOI");
+	strcpy(packet.info.name,"zjy_ak_ioi");
+	strcpy(packet.info.workDir,"D:\\TEST");
+	strcpy(packet.info.OS,"Windows 10");
+	packet.info.useComputerName = false;
 	if (sendto(UDP_SOCKET,&packet,sizeof(packet),0,(sockaddr*)&ServerAddr,socklen)<0) {
 		reportError("Failed to send test message");
 		return 1;
