@@ -400,7 +400,7 @@ int main(int argc, char **argv) {
 	if (!strcmp(s,"stop")) {
 		ensure(2);
 		if (connectToDaemon()) goto connectFailed;
-		char op=DOP_KILL;
+ 		char op=DOP_KILL;
 		if (send(DAEMON_SOCKET,&op,1,0)<0) {
 			reportError("Failed to send the kill command");
 			return 1;
