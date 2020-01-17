@@ -78,14 +78,14 @@ int main(int argc, char **args) {
 
 	socklen=sizeof(sockaddr_in);
 	ServerAddr.sin_family=AF_INET;
-	// ServerAddr.sin_addr.s_addr=inet_addr(BROAD_ADDR);
-	ServerAddr.sin_addr.s_addr=inet_addr("10.92.104.111");
+	ServerAddr.sin_addr.s_addr=inet_addr(BROAD_ADDR);
+	// ServerAddr.sin_addr.s_addr=inet_addr("10.92.104.111");
 	ServerAddr.sin_port=htons(PORT_CLIENT);
-	/*if (::bind(UDP_SOCKET,(sockaddr*)&ServerAddr,socklen)<0) {
+	if (::bind(UDP_SOCKET,(sockaddr*)&ServerAddr,socklen)<0) {
 		reportError("Failed to bind UDP socket");
 		return 1;
-	}*/
-	TPacket packet;
+	}
+	/*TPacket packet;
 	packet.operation = TPacket::SHOW_TEST_MESSAGE;
 	strcpy(packet.info.name,"zjy_ak_ioi");
 	strcpy(packet.info.workDir,"D:\\TEST");
@@ -95,7 +95,7 @@ int main(int argc, char **args) {
 		reportError("Failed to send test message");
 		return 1;
 	}
-	return 0;
+	return 0;*/
 
 	TCPAddr.sin_family=AF_INET;
 	TCPAddr.sin_port=htons(PORT_CLIENT);
